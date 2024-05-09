@@ -11,4 +11,11 @@ class AppTheme {
 
   static const Color exitColor = Color.fromARGB(255, 226, 72, 61);
   static const Color minimizeColor = Color.fromARGB(255, 49, 49, 49);
+  static const Color sidebarBg = Color.fromARGB(150, 19, 19, 19);
+
+  static const TextStyle titleStyle = TextStyle(
+    color: light,
+    fontStyle: FontStyle.italic,
+    fontWeight: FontWeight.w500,
+  );
 }
