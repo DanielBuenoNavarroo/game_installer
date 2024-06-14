@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:game_installer/services/download_service.dart';
 import 'package:game_installer/utils/app_styles.dart';
 import 'package:game_installer/utils/status.dart';
+import 'package:game_installer/widgets/progress_bar.dart';
 import 'package:window_manager/window_manager.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -17,8 +18,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    addListener();
     downloadService.onStart();
+    addListener();
   }
 
   @override
@@ -29,10 +30,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void addListener() {
     downloadService.currentStatusNotifier.addListener(_onStatusChanged);
+    downloadService.currentDownloadProgress.addListener(_onStatusChanged);
   }
 
   void removeListener() {
     downloadService.currentStatusNotifier.removeListener(_onStatusChanged);
+    downloadService.currentDownloadProgress.removeListener(_onStatusChanged);
   }
 
   void _onStatusChanged() {
@@ -57,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case Status.downloading:
         return _mainButton(null, 'Downloading');
       case Status.haveAnUpdate:
-        return _mainButton(() => downloadService.updateFile(context), 'Update');
+        return _mainButton(() => null, 'Update');
       case Status.ready:
         return _mainButton(() => downloadService.startGame(context), 'Play');
       default:
@@ -76,11 +79,6 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: AppTheme.dark,
         toolbarHeight: 40,
         actions: [
-          _iconButtonAppBar(
-            () => null,
-            Icons.settings,
-            AppTheme.minimizeColor,
-          ),
           _iconButtonAppBar(
             () => _minimize(),
             Icons.horizontal_rule_rounded,
@@ -115,35 +113,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        color: AppTheme.dark,
-                        child: _iconButton(() => null, Icons.home),
-                      ),
+                      _iconButton(() => null, Icons.home),
                       const SizedBox(
                         height: 40,
                       ),
-                      Container(
-                        color: AppTheme.dark,
-                        child: _iconButton(() => null, Icons.discord),
-                      ),
+                      _iconButton(() => null, Icons.discord),
                       const SizedBox(
                         height: 40,
                       ),
-                      Container(
-                        color: AppTheme.dark,
-                        child: _iconButton(() => null, Icons.photo_rounded),
-                      ),
+                      _iconButton(() => null, Icons.photo_rounded),
                     ],
                   ),
                 ),
               ),
             ),
             Positioned(
-              bottom: 50,
+              bottom: 45,
               right: 150,
-              left: 150,
+              width: 150,
               height: 70,
               child: _mainButtonForStatus(context),
+            ),
+            Positioned(
+              bottom: 50,
+              right: 350,
+              height: 50,
+              width: 850,
+              child: downloadService.currentStatusNotifier.value ==
+                      Status.downloading
+                  ? Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: ProgressBar(
+                          progress:
+                              downloadService.currentDownloadProgress.value),
+                    )
+                  : const SizedBox(
+                      height: 1,
+                      width: 1,
+                    ),
             ),
           ],
         ),

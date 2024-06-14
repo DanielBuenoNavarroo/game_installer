@@ -12,7 +12,6 @@ void main() async {
     maximumSize: windowSize,
     minimumSize: windowSize,
     center: true,
-    title: 'Agile Asphalt',
   );
 
   windowManager.waitUntilReadyToShow(
